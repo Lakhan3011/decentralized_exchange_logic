@@ -2,10 +2,18 @@ import express from "express";
 
 const app = express();
 
-let ETH_BALANCE = 200;
-let USDC_BALANCE = 75000;
+app.use(express.json());
 
-app.post("./buy-asset", (req, res) => {
+let ETH_BALANCE = 200;
+let USDC_BALANCE = 740000;
+
+app.get("/", (req, res) => {
+  res.json({
+    message: "Welcome to dex",
+  });
+});
+
+app.post("/buy-asset", (req, res) => {
   const quantity = req.body.quantity;
   const updatedEthBalance = ETH_BALANCE - quantity;
   const updatedUsdcBalance = (ETH_BALANCE * USDC_BALANCE) / updatedEthBalance;
@@ -19,17 +27,17 @@ app.post("./buy-asset", (req, res) => {
   });
 });
 
-app.post("./sell-asset", (req, res) => {
+app.post("/sell-asset", (req, res) => {
   const quantity = req.body.quantity;
   const updatedEthBalance = ETH_BALANCE + quantity;
   const updatedUsdcBalance = (ETH_BALANCE * USDC_BALANCE) / updatedEthBalance;
-  const gottenUSDC = updatedUsdcBalance - USDC_BALANCE;
+  const gottenUSDC = USDC_BALANCE - updatedUsdcBalance;
 
   ETH_BALANCE = updatedEthBalance;
   USDC_BALANCE = updatedUsdcBalance;
 
   res.json({
-    message: `You gotten ${gottenUSDC} USDC for ${quantity} ETH`,
+    message: `You have gotten ${gottenUSDC} USDC for ${quantity} ETH`,
   });
 });
 
